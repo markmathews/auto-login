@@ -1,22 +1,61 @@
 '''
-
 **Lots of features yet to be added**, including:
 * Booking for any given day. At present, script only works for a specific day
 * Deleting/Editing existing bookings 
 * Printing the day's menu to your terminal 
 * Better error handling and checking for booking success 
+* Viewing your profile (how many bookings you have made this term, etc.) 
+* Printing out special events and enabling booking for those as well 
 
+Also would be nice to restructure the program so that Raven authentication is 
+done right after login credentials are entered so that potential errors are 
+detected before having to input a lot of data (which can be annoying)
 '''
 
 from robobrowser import RoboBrowser 
+import time 
 
-raven_url = 'https://raven.cam.ac.uk/auth/login.html'
-print('Enter your CRSid')
+def event(selection): 
+	return {
+		'f': '618', #first hall
+		'o': '617', #formal hall
+		'c': '623', #cafeteria hall
+		's': '622', #sunday formal hall
+	}.get(selection, 'error') #return error for invalid input
+
+
+def confirm_book_success(html): 
+	#TODO 
+
+
+#login credentials and other input data  
+''' 
+This will be replaced with a 'default settings option' wherein the 
+default settings are stored in a text file and read from at runtime
+'''
+print('Enter your CRSid: ')
 raven_id = input() #ENTER CRSID
-print('Enter your Raven password')
-raven_password = input() #ENTER RAVEN PASSWORD
-book_url = 'https://www.mealbookings.cai.cam.ac.uk/bookings.php?event=618&date=2017-02-06'
 
+print('Enter your Raven password: ')
+raven_password = input() #ENTER RAVEN PASSWORD
+
+print('Enter day to book for in yyyy-mm-dd format: ')  #TODO improve by accepting days of the week as input - choosing the upcoming one by default 
+date = input()
+
+print('Enter \'f\' for first hall, \'o\' for formal hall,\n \'c\' for Cafeteria Hall or \'s\' for Sunday Formal: ')
+selection = input()
+event = event(selection)
+
+
+#generate custom booking URL 
+book_url = 'https://www.mealbookings.cai.cam.ac.uk/bookings.php?event=' + event + '&date=' + date 
+
+#raven login URL (no customisation required)
+raven_url = 'https://raven.cam.ac.uk/auth/login.html'
+
+
+
+#START BROWSING 
 browser = RoboBrowser(parser = 'html.parser')
 
 #login to Raven 
@@ -32,15 +71,15 @@ print('Passed Raven')
 browser.open(book_url)
 
 #click on 'Meal Booking' button
-init_form = browser.get_form(method = "post")
-browser.submit_form(init_form, submit=init_form.submit_fields["edit"]) #submit = init_form['edit']
+init_form = browser.get_form(method = 'post')
+browser.submit_form(init_form, submit=init_form.submit_fields['edit']) #submit = init_form['edit']
 
 #submit final form 
 final_form = browser.get_form(action = '')
 browser.submit_form(final_form) #submit = final_form['update'] ////  , submit=final_form.submit_fields["update"]
 
 print(browser.parsed) #print out HTML of final page 
-print('Success')
+#print('Success')
 
 
 
