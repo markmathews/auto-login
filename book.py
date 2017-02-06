@@ -6,10 +6,11 @@
 * Better error handling and checking for booking success 
 * Viewing your profile (how many bookings you have made this term, etc.) 
 * Printing out special events and enabling booking for those as well 
+* Adding to waitlist in case booking has closed 
 
 Also would be nice to restructure the program so that Raven authentication is 
 done right after login credentials are entered so that potential errors are 
-detected before having to input a lot of data (which can be annoying)
+detected before having to input a lot of other data (which can be annoying)
 '''
 
 from robobrowser import RoboBrowser 
@@ -46,13 +47,8 @@ print('Enter \'f\' for first hall, \'o\' for formal hall,\n \'c\' for Cafeteria 
 selection = input()
 event = event(selection)
 
-
-#generate custom booking URL 
-book_url = 'https://www.mealbookings.cai.cam.ac.uk/bookings.php?event=' + event + '&date=' + date 
-
-#raven login URL (no customisation required)
-raven_url = 'https://raven.cam.ac.uk/auth/login.html'
-
+book_url = 'https://www.mealbookings.cai.cam.ac.uk/bookings.php?event=' + event + '&date=' + date #generate custom booking URL 
+raven_url = 'https://raven.cam.ac.uk/auth/login.html' #raven login URL (no customisation required)
 
 
 #START BROWSING 
